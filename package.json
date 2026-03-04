@@ -1,0 +1,21 @@
+{
+  "name": "dev-tinder",
+  "version": "1.0.0",
+  "description": "TInder for DEVs",
+  "keywords": [
+    "javascript",
+    "nodejs",
+    "backend"
+  ],
+  "license": "ISC",
+  "author": "Utkarsh Sahu",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
