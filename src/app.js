@@ -6,22 +6,15 @@ app.use("/test", (req, res) => {
   res.send("Hello, World!");
 });
 
-app.get("/user", (req, res) => {
+app.get("/user/:userid/:name/:password", (req, res) => {
+    console.log({...req.params});
+    
   res.send({
     firstname: "Utkarsh",
     lastname: "Sahu",
   });
 });
 
-app.post('/user', (req, res) => {
-    console.log('User added');
-    res.send("Data saved successfully to DB!");
-})
-
-app.delete('/user', (req, res) => {
-    res.send("User deleted successfully from DB!");
-})
-
-app.listen(3000, () => {
-  console.log("Server is running on port 3000...");
+app.listen(7777, () => {
+  console.log("Server is running on port 7777...");
 });
