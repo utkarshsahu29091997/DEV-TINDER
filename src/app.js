@@ -2,31 +2,29 @@ const express = require("express");
 
 const app = express();
 
-app.use(
-  "/user",
-  (req, res, next) => {
-    console.log("handfling the route user");
-    next();
-  },
-  [
-    (req, res, next) => {
-      console.log("handfling the route user 2");
-      // res.send("Response 2")
-      next();
-    },
-    (req, res, next) => {
-      console.log("Handfling the route user 3");
-      // res.send("Response 3")
-      next();
-    },
-  ],
-  (req, res, next) => {
-    console.log("handfling the route user 4");
-    // next()
-    res.send("Response 4");
-    // return 'test'
-  },
-);
+const {adminAuth, userAuth} = require("./middlewares/auth");
+
+app.use('/admin', adminAuth)
+
+// app.use('/user', userAuth)
+
+app.post('/user/login', (req, res, next) => {
+    res.send("User Logged In")
+})
+
+app.get('/user/getData', userAuth, (req, res, next) => {
+    res.send("Data Sent")
+})
+
+app.get('/admin/getAllData', (req, res, next) => {
+    res.send("All Data Sent")
+})
+
+app.get('/admin/delete', (req, res, next) => {
+    res.send("Data Deleted")
+})
+
+
 
 app.listen(7777, () => {
   console.log("Server is running on port 7777...");
