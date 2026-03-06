@@ -18,6 +18,12 @@ app.post("/signup", async (req, res) => {
 
 app.get("/user", async (req, res) => {
   const userEmail = req.body.email;
+//   try {
+//     const users = await User.findById({_id: '69aaf0f8d2e83a6bc70cffe8'})
+//     res.send(users)
+//   } catch (error) {
+//     res.status(400).send("Something went wrong: " + err.message)
+//   }
   // try {
   //     const user = await User.findOne()
   //     if(!user) {
@@ -49,6 +55,31 @@ app.get("/feed", async (req, res) => {
     res.status(500).send("Error fetching users: " + error.message);
   }
 });
+
+app.delete("/user", async(req, res) => {
+    const userId = req.body.userId
+    console.log('userId', userId)
+    try {
+        const deletedUser = await User.findByIdAndDelete(userId)
+        if(!deletedUser) {
+            res.status(404).send("user not found")
+        }
+        res.send("User deleted successfully")
+    } catch (err) {
+        res.status(400).send("Something went wrong: " + err.message)
+    }
+})
+
+// app.delete("/user/:email", async (req, res) => {
+//     const userEmail = req.params.email
+//     try {
+//         const deletedUser = await User.deleteOne({email: userEmail})
+//         console.log('deletedUser', deletedUser)
+//         res.send(deletedUser)
+//     } catch (err) {
+//         res.status(400).send("Something went wrong: " + err.message)
+//     }
+// })
 
 connectDB()
   .then(() => {
