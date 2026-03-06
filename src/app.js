@@ -93,14 +93,22 @@ app.put("/user", async(req, res) => {
 })
 
 app.patch("/user", async(req, res) => {
-    const userId = req.body.userId
+    const email = req.body.email
     const data = req.body
     try {
-        const user = await User.findByIdAndUpdate(userId, data, {returnDocument: "after"})
-        res.send("User updated successfully")
+        const updatedUser = await User.findOneAndUpdate({email: email}, data)
+        res.send("user updated successfully")
     } catch (error) {
-        res.status(400).send("Something went wrong: " + error.message)
+        res.status(400).send("Something went wrong: " + err.message)
     }
+    // const userId = req.body.userId
+    // const data = req.body
+    // try {
+    //     const user = await User.findByIdAndUpdate(userId, data, {returnDocument: "after"})
+    //     res.send("User updated successfully")
+    // } catch (error) {
+    //     res.status(400).send("Something went wrong: " + error.message)
+    // }
 })
 
 connectDB()
