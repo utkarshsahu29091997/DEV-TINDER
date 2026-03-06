@@ -1,22 +1,54 @@
 const express = require("express");
 const connectDB = require("./config/database");
-const User = require("./models/user")
+const User = require("./models/user");
 
 const app = express();
 
-app.use(express.json())
+app.use(express.json());
 
-app.post("/signup", async(req, res) => {
-    
-    console.log(req.body)
-    const user = new User(req.body)
-    try {
-        await user.save()
-        res.send("User created successfully")
-    } catch(err) {
-        res.status(400).send("Error saving the uses:" + err.message)
+app.post("/signup", async (req, res) => {
+  const user = new User(req.body);
+  try {
+    await user.save();
+    res.send("User created successfully");
+  } catch (err) {
+    res.status(400).send("Error saving the uses:" + err.message);
+  }
+});
+
+app.get("/user", async (req, res) => {
+  const userEmail = req.body.email;
+  // try {
+  //     const user = await User.findOne()
+  //     if(!user) {
+  //         res.status(404).send("user not found")
+  //     }
+  //     res.send(user)
+  // } catch(err) {
+  //     res.status(400).send("Something went wrong: " + err.message)
+  // }
+  try {
+    const users = await User.find({ email: userEmail });
+    if (users.length === 0) {
+      res.status(404).send("User not found");
     }
-})
+    res.send(users[0]);
+  } catch (error) {
+    res.status(400).send("Something went wrong");
+  }
+});
+
+// Feed API - GET /feed - get all the users from the database
+app.get("/feed", async (req, res) => {
+  try {
+    const users = await User.find({});
+    console.log("users", users);
+    const usersList = users.map((user) => user.firstName + " " + user.lastName);
+    res.send(usersList);
+  } catch (error) {
+    res.status(500).send("Error fetching users: " + error.message);
+  }
+});
 
 connectDB()
   .then(() => {
