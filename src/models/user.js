@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 const { Schema } = mongoose;
 
 const userSchema = new Schema(
@@ -17,6 +18,17 @@ const userSchema = new Schema(
       unique: true,
       lowercase: true,
       trim: true,
+      //   validate: {
+      //     validator: function (value) {
+      //       return validator.isEmail(value);
+      //     },
+      //     message: (props) => `${props.value} is not a valid email!`,
+      //   },
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("Email is not valid");
+        }
+      },
     },
     password: {
       type: String,
@@ -38,6 +50,11 @@ const userSchema = new Schema(
       type: String,
       default:
         "https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG-High-Quality-Image.png",
+      validate(value) {
+        if (!validator.isURL(value)) {
+          throw new Error("Photo URL is not valid");
+        }
+      },
     },
     about: {
       type: String,
