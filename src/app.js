@@ -18,12 +18,12 @@ app.post("/signup", async (req, res) => {
 
 app.get("/user", async (req, res) => {
   const userEmail = req.body.email;
-//   try {
-//     const users = await User.findById({_id: '69aaf0f8d2e83a6bc70cffe8'})
-//     res.send(users)
-//   } catch (error) {
-//     res.status(400).send("Something went wrong: " + err.message)
-//   }
+  //   try {
+  //     const users = await User.findById({_id: '69aaf0f8d2e83a6bc70cffe8'})
+  //     res.send(users)
+  //   } catch (error) {
+  //     res.status(400).send("Something went wrong: " + err.message)
+  //   }
   // try {
   //     const user = await User.findOne()
   //     if(!user) {
@@ -56,19 +56,18 @@ app.get("/feed", async (req, res) => {
   }
 });
 
-app.delete("/user", async(req, res) => {
-    const userId = req.body.userId
-    console.log('userId', userId)
-    try {
-        const deletedUser = await User.findByIdAndDelete(userId)
-        if(!deletedUser) {
-            res.status(404).send("user not found")
-        }
-        res.send("User deleted successfully")
-    } catch (err) {
-        res.status(400).send("Something went wrong: " + err.message)
+app.delete("/user", async (req, res) => {
+  const userId = req.body.userId;
+  try {
+    const deletedUser = await User.findByIdAndDelete(userId);
+    if (!deletedUser) {
+      res.status(404).send("user not found");
     }
-})
+    res.send("User deleted successfully");
+  } catch (err) {
+    res.status(400).send("Something went wrong: " + err.message);
+  }
+});
 
 // app.delete("/user/:email", async (req, res) => {
 //     const userEmail = req.params.email
@@ -81,35 +80,48 @@ app.delete("/user", async(req, res) => {
 //     }
 // })
 
-app.put("/user", async(req, res) => {
-    const userId = req.body.userId
-    const data = req.body
-    try {
-        const updatedUser = await User.findByIdAndUpdate(userId, data)
-        res.send("User updated successfully")
-    } catch (error) {
-        res.status(400).send("Something went wrong: " + error.message)
-    }
-})
+app.put("/user", async (req, res) => {
+  const userId = req.body.userId;
+  const data = req.body;
+  try {
+    const updatedUser = await User.findByIdAndUpdate(userId, data);
+    res.send("User updated successfully");
+  } catch (error) {
+    res.status(400).send("Something went wrong: " + error.message);
+  }
+});
 
-app.patch("/user", async(req, res) => {
-    const email = req.body.email
-    const data = req.body
-    try {
-        const updatedUser = await User.findOneAndUpdate({email: email}, data)
-        res.send("user updated successfully")
-    } catch (error) {
-        res.status(400).send("Something went wrong: " + err.message)
+app.patch("/user/:userId", async (req, res) => {
+  //   const email = req.body.email;
+  //   const data = req.body;
+  //   try {
+  //     const updatedUser = await User.findOneAndUpdate({ email: email }, data, {
+  //       runValidators: true,
+  //     });
+  //     res.send("user updated successfully");
+  //   } catch (err) {
+  //     res.status(400).send("Something went wrong: " + err.message);
+  //   }
+  //   const userId = req.body.userId;
+  const userId = req.params?.userId;
+  const data = req.body;
+  try {
+    const ALLOWED_UPDATES = ["about", "gender", "photoUrl", "age", "skills"];
+    const isUpdatedAllowed = Object.keys(data).every((key) =>
+      ALLOWED_UPDATES.includes(key),
+    );
+    console.log("isUpdatedAllowed", isUpdatedAllowed);
+    if (!isUpdatedAllowed) {
+      throw new Error("Update not allowed");
     }
-    // const userId = req.body.userId
-    // const data = req.body
-    // try {
-    //     const user = await User.findByIdAndUpdate(userId, data, {returnDocument: "after"})
-    //     res.send("User updated successfully")
-    // } catch (error) {
-    //     res.status(400).send("Something went wrong: " + error.message)
-    // }
-})
+    const user = await User.findByIdAndUpdate(userId, data, {
+      returnDocument: "after",
+    });
+    res.send("User updated successfully");
+  } catch (error) {
+    res.status(400).send("Something went wrong: " + error.message);
+  }
+});
 
 connectDB()
   .then(() => {
