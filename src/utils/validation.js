@@ -12,4 +12,16 @@ const validateSignUpData = (req) => {
   }
 };
 
-module.exports = { validateSignUpData };
+const validateLoginData = req => {
+    const {email, password} = req.body
+    console.log('req.body', req.body)
+
+    if(!email || !validator.isEmail(email)) {
+        throw new Error("Invalid credentials!")
+    } else if (!password) {
+        console.log('password issue')
+        throw new Error("Password is required!")
+    }
+}
+
+module.exports = { validateSignUpData, validateLoginData };
