@@ -2,18 +2,24 @@ const express = require("express");
 const connectDB = require("./config/database");
 const User = require("./models/user");
 const validator = require("validator");
+const bcrypt = require("bcryptjs");
+const { validateSignUpData } = require("./utils/validation");
 
 const app = express();
 
 app.use(express.json());
 
 app.post("/signup", async (req, res) => {
-  const user = new User(req.body);
-//   const { photoUrl } = user;
   try {
-    // if (!validator.isURL(photoUrl)) {
-    //   throw new Error("Photo URL is not valid");
-    // }
+    // req.body validation
+    validateSignUpData(req);
+
+    // password encryption
+    const { firstName, lastName, password, email } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = new User({firstName, lastName, email, password: hashedPassword});
+    console.log('user', user)
     await user.save();
     res.send("User created successfully");
   } catch (err) {
