@@ -14,7 +14,6 @@ const validateSignUpData = (req) => {
 
 const validateLoginData = req => {
     const {email, password} = req.body
-    console.log('req.body', req.body)
 
     if(!email || !validator.isEmail(email)) {
         throw new Error("Invalid credentials!")
