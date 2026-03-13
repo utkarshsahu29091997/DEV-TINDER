@@ -1,10 +1,8 @@
 const express = require("express");
 const connectDB = require("./config/database");
 const User = require("./models/user");
-const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const cookieParser = require("cookie-parser");
-const jwt = require("jsonwebtoken");
 const { validateSignUpData, validateLoginData } = require("./utils/validation");
 const { userAuth } = require("./middlewares/auth");
 
@@ -41,24 +39,20 @@ app.post("/login", async (req, res) => {
     // req.body validation
     validateLoginData(req);
 
-    const user = await User.find({ email: email });
-    if (user.length === 0) {
+    const user = await User.findOne({ email: email });
+    if (!user) {
       throw new Error("Invalid credentials");
     }
-    const { password: storedHashedPassword } = user[0];
 
     // password decryption
-    const decryptedPasswordCheck = await bcrypt.compare(
-      password,
-      storedHashedPassword,
+    const decryptedPasswordCheck = await user.validatePassword(
+      password
     );
     if (!decryptedPasswordCheck) {
       throw new Error("Invalid credentials");
     }
     // create jwt token
-    const token = jwt.sign({ _id: user[0]._id }, "DEV@Tinder$790", {
-      expiresIn: "1d",
-    });
+    const token = await user.getJWT()
     // set the token inside cookie
     res.cookie("token", token, {
         expires: new Date(Date.now() + 8 * 3600000) // cookie will be removed after 8 hours
