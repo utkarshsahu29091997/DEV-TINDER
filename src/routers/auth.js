@@ -1,6 +1,9 @@
 const express = require("express");
 const authRouter = express.Router();
-const { validateSignUpData, validateLoginData } = require("../utils/validation");
+const {
+  validateSignUpData,
+  validateLoginData,
+} = require("../utils/validation");
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 
@@ -53,6 +56,14 @@ authRouter.post("/login", async (req, res) => {
   } catch (error) {
     res.status(400).send(error.message);
   }
+});
+
+authRouter.post("/logout", async (req, res) => {
+  // res.clearCookie("token")
+  res.cookie("token", null, {
+    expires: new Date(Date.now()),
+  });
+  res.send("Logout successfull");
 });
 
 module.exports = authRouter;

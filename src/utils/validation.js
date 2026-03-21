@@ -12,15 +12,36 @@ const validateSignUpData = (req) => {
   }
 };
 
-const validateLoginData = req => {
-    const {email, password} = req.body
+const validateLoginData = (req) => {
+  const { email, password } = req.body;
 
-    if(!email || !validator.isEmail(email)) {
-        throw new Error("Invalid credentials!")
-    } else if (!password) {
-        console.log('password issue')
-        throw new Error("Password is required!")
-    }
-}
+  if (!email || !validator.isEmail(email)) {
+    throw new Error("Invalid credentials!");
+  } else if (!password) {
+    console.log("password issue");
+    throw new Error("Password is required!");
+  }
+};
 
-module.exports = { validateSignUpData, validateLoginData };
+const validatedEditProfileData = (req) => {
+  const editFieldsAllowed = [
+    "firstName",
+    "lastName",
+    "age",
+    "gender",
+    "photoUrl",
+    "about",
+    "skills",
+  ];
+
+  const isAllowed = Object.keys(req.body).every((key) =>
+    editFieldsAllowed.includes(key),
+  );
+  return isAllowed;
+};
+
+module.exports = {
+  validateSignUpData,
+  validateLoginData,
+  validatedEditProfileData,
+};
